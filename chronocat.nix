@@ -33,7 +33,7 @@ lib,
   fonts = makeFontsConf {
     fontDirectories = [ ];
   };
-in runCommand "qq" {} ''
+in runCommand "chronocat" {} ''
   ${util-linux}/bin/unshare -r ${writeScript "unshared" ''
     #!${runtimeShell}
     export PATH=$PATH:${lib.makeBinPath [
