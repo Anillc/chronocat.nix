@@ -8,10 +8,13 @@ runCommand,
 util-linux,
 fetchurl,
 xdotool,
+gnutar,
 procps,
 glibc,
 xorg,
+curl,
 lib,
+jq,
 ...
 }: let
   qq = fetchurl {
@@ -26,10 +29,6 @@ lib,
     url = "https://unifoundry.com/pub/unifont/unifont-13.0.06/font-builds/unifont-13.0.06.ttf";
     sha256 = "sha256-1zwEJYEf/TZrDRlz6TOLrCb+fPCFdgoS4QxhJBkV50I=";
   };
-  launcher = fetchurl {
-    url = "https://registry.npmjs.org/@chronocat/koishi-plugin-launcher/-/koishi-plugin-launcher-0.0.6.tgz";
-    sha256 = "sha256-gg33XJcFqzECd6qJwlf/If2y6BTIxOYrLaMYIeXJLFA=";
-  };
   fonts = makeFontsConf {
     fontDirectories = [ ];
   };
@@ -42,18 +41,29 @@ in runCommand "chronocat" {} ''
     ]}
 
     mkdir -p $out/bin
-    tar xf ${launcher}
-    cp package/bin/launcher.exe $out/launcher.exe
     cat > $out/bin/chronocat <<EOF
       #!${runtimeShell}
-      export WINEPREFIX=\$(pwd)/chronocat/wine
-      if [ ! -d "\$(pwd)/chronocat" ]; then
-        mkdir -p \$(pwd)/chronocat
+      set -eu
+      export PATH=$PATH:${lib.makeBinPath [
+        curl jq gnutar wineWowPackages.full
+      ]}
+
+      rm -rf .tmp
+      mkdir .tmp
+      cd .tmp
+      REGISTRY="\$(curl https://registry.npmjs.org/@chronocat/koishi-plugin-launcher)"
+      TARBALL=\$(echo "\$REGISTRY" | jq -r '.versions|to_entries|last.value.dist.tarball')
+      curl "\$TARBALL" | tar xzf -
+      cp package/bin/launcher.exe ..
+      cd ..
+      rm -rf .tmp
+
+      export WINEPREFIX=\$(pwd)/wine
+      if [ ! -d "\$(pwd)" ]; then
         cp -r $out/wine \$WINEPREFIX
         chmod -R u+w \$WINEPREFIX
       fi
-      cd chronocat
-      ${wineWowPackages.full}/bin/wine $out/launcher.exe
+      wine launcher.exe
     EOF
     chmod +x $out/bin/chronocat
 
