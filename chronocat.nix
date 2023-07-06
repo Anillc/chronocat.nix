@@ -27,8 +27,8 @@ lib,
     sha256 = "sha256-1zwEJYEf/TZrDRlz6TOLrCb+fPCFdgoS4QxhJBkV50I=";
   };
   launcher = fetchurl {
-    url = "https://registry.npmjs.org/@chronocat/koishi-plugin-launcher/-/koishi-plugin-launcher-0.0.5.tgz";
-    sha256 = "sha256-8EplGOHeZ6nM1YQn1JRgOidAW6TLR9fHAyjxlnSz8m4=";
+    url = "https://registry.npmjs.org/@chronocat/koishi-plugin-launcher/-/koishi-plugin-launcher-0.0.6.tgz";
+    sha256 = "sha256-gg33XJcFqzECd6qJwlf/If2y6BTIxOYrLaMYIeXJLFA=";
   };
   fonts = makeFontsConf {
     fontDirectories = [ ];
