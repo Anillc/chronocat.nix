@@ -44,9 +44,9 @@ in runCommand "chronocat" {} ''
     cat > $out/bin/chronocat <<EOF
       #!${runtimeShell}
       set -eu
-      export PATH=$PATH:${lib.makeBinPath [
+      export PATH=${lib.makeBinPath [
         curl jq gnutar wineWowPackages.full
-      ]}
+      ]}:\$PATH
 
       rm -rf .tmp
       mkdir .tmp
@@ -54,16 +54,16 @@ in runCommand "chronocat" {} ''
       REGISTRY="\$(curl https://registry.npmjs.org/@chronocat/koishi-plugin-launcher)"
       TARBALL=\$(echo "\$REGISTRY" | jq -r '.versions|to_entries|last.value.dist.tarball')
       curl "\$TARBALL" | tar xzf -
-      cp package/bin/launcher.exe ..
+      cp -r package/bin/launcher.exe ..
       cd ..
       rm -rf .tmp
 
       export WINEPREFIX=\$(pwd)/wine
-      if [ ! -d "\$(pwd)" ]; then
+      if [ ! -d "\$(pwd)/wine" ]; then
         cp -r $out/wine \$WINEPREFIX
         chmod -R u+w \$WINEPREFIX
       fi
-      wine launcher.exe
+      wine launcher.exe -f
     EOF
     chmod +x $out/bin/chronocat
 
