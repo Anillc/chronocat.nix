@@ -11,6 +11,7 @@ xdotool,
 gnutar,
 procps,
 glibc,
+gzip,
 xorg,
 curl,
 lib,
@@ -42,28 +43,28 @@ in runCommand "chronocat" {} ''
 
     mkdir -p $out/bin
     cat > $out/bin/chronocat <<EOF
-      #!${runtimeShell}
-      set -eu
-      export PATH=${lib.makeBinPath [
-        curl jq gnutar wineWowPackages.full
-      ]}:\$PATH
+    #!${runtimeShell}
+    set -eu
+    export PATH=${lib.makeBinPath [
+      curl jq gnutar gzip wineWowPackages.full
+    ]}:\$PATH
 
-      rm -rf .tmp
-      mkdir .tmp
-      cd .tmp
-      REGISTRY="\$(curl https://registry.npmjs.org/@chronocat/koishi-plugin-launcher)"
-      TARBALL=\$(echo "\$REGISTRY" | jq -r '.versions|to_entries|last.value.dist.tarball')
-      curl "\$TARBALL" | tar xzf -
-      cp -r package/bin/launcher.exe ..
-      cd ..
-      rm -rf .tmp
+    rm -rf .tmp
+    mkdir .tmp
+    cd .tmp
+    REGISTRY="\$(curl https://registry.npmjs.org/@chronocat/koishi-plugin-launcher)"
+    TARBALL=\$(echo "\$REGISTRY" | jq -r '.versions|to_entries|last.value.dist.tarball')
+    curl "\$TARBALL" | tar xzf -
+    cp -r package/bin/launcher.exe ..
+    cd ..
+    rm -rf .tmp
 
-      export WINEPREFIX=\$(pwd)/wine
-      if [ ! -d "\$(pwd)/wine" ]; then
-        cp -r $out/wine \$WINEPREFIX
-        chmod -R u+w \$WINEPREFIX
-      fi
-      wine launcher.exe -f
+    export WINEPREFIX=\$(pwd)/wine
+    if [ ! -d "\$(pwd)/wine" ]; then
+      cp -r $out/wine \$WINEPREFIX
+      chmod -R u+w \$WINEPREFIX
+    fi
+    wine launcher.exe -f
     EOF
     chmod +x $out/bin/chronocat
 
