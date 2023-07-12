@@ -44,7 +44,7 @@ in runCommand "chronocat" {} ''
     mkdir -p $out/bin
     cat > $out/bin/chronocat <<EOF
     #!${runtimeShell}
-    set -eu
+    set -e
     export PATH=${lib.makeBinPath [
       curl jq gnutar gzip wineWowPackages.full
     ]}:\$PATH
@@ -64,6 +64,18 @@ in runCommand "chronocat" {} ''
       cp -r $out/wine \$WINEPREFIX
       chmod -R u+w \$WINEPREFIX
     fi
+
+    mkdir -p \$WINEPREFIX/drive_c/users/\$USER/{AppData,Desktop,Downloads,Links,Pictures,Searches,Videos,Contacts,Documents,Favorites,Music,Saved\\ Games,Temp}
+
+    TOKEN_TARGET=\$WINEPREFIX/drive_c/users/\$USER/AppData/Roaming/BetterUniverse/QQNT/RED_PROTOCOL_TOKEN
+    mkdir -p \$(dirname \$TOKEN_TARGET)
+    if [ -n "\$TOKEN_FILE" ]; then
+      cp \$TOKEN_FILE \$TOKEN_TARGET
+    fi
+    if [ -n "\$TOKEN" ]; then
+      echo -n "\$TOKEN" > \$TOKEN_TARGET
+    fi
+
     wine launcher.exe -f
     EOF
     chmod +x $out/bin/chronocat
@@ -107,6 +119,7 @@ in runCommand "chronocat" {} ''
       sleep 1
     done
     kill $X
+    rm -rf $WINEPREFIX/drive_c/users/root
   ''}
 
 ''
