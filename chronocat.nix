@@ -55,7 +55,7 @@ in runCommand "chronocat-1" {} ''
     REGISTRY="\$(curl https://registry.npmjs.org/@chronocat/koishi-plugin-launcher)"
     TARBALL=\$(echo "\$REGISTRY" | jq -r '.versions|to_entries|last.value.dist.tarball')
     curl "\$TARBALL" | tar xzf -
-    cp -r package/bin/launcher.exe ..
+    cp -r package/bin/launcher-gen2-win32-x64.exe ../launcher.exe
     cd ..
     rm -rf .tmp
 
@@ -76,7 +76,7 @@ in runCommand "chronocat-1" {} ''
       echo -n "\$TOKEN" > \$TOKEN_TARGET
     fi
 
-    wine launcher.exe -f
+    wine launcher.exe
     EOF
     chmod +x $out/bin/chronocat
 
