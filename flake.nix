@@ -2,7 +2,8 @@
   description = "Description for the project";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
+    # nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/e79e306aa93ea6000a96c6f3faf75a38c2d74050";
   };
 
   outputs = inputs@{ flake-parts, ... }:
