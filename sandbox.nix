@@ -40,6 +40,6 @@ in writeScriptBin "chronocat" ''
       ln -s ${cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-bundle.crt
       ln -s ${cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
       ln -s ${fonts} /etc/fonts/fonts.conf
-      ${chronocat}/bin/qq --disable-gpu
-    ''}
+      ${chronocat}/bin/qq "$@"
+    ''} "$@"
 ''
