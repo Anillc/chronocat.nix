@@ -5,9 +5,10 @@ jq,
 lib,
 ...
 }: let
+  version = "0.0.49";
   chronocat = fetchzip {
-    url = "https://github.com/chrononeko/chronocat/releases/download/v0.0.48/chronocat-iife-v0.0.48.zip";
-    sha256 = "sha256-yHKQ3AWkXn+JXFqjgD5LV9bIJqx7rgNJGXg/waHjysU=";
+    url = "https://github.com/chrononeko/chronocat/releases/download/v${version}/chronocat-iife-v${version}.zip";
+    sha256 = "sha256-jcRSMkJ14m7Ghix89DG1uRAlh+vrBN1gqYOshK4VcAI=";
   };
 in qq.overrideAttrs (old: {
   postFixup = ''
