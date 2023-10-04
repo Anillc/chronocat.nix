@@ -10,9 +10,9 @@
       imports = [];
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       perSystem = { config, self', inputs', pkgs, system, ... }: {
-        packages.default = pkgs.callPackage ./chronocat.nix {};
-        packages.sandbox = pkgs.callPackage ./sandbox.nix {
-          chronocat = self'.packages.default;
+        packages.chronocat = pkgs.callPackage ./chronocat.nix {};
+        packages.default = pkgs.callPackage ./sandbox.nix {
+          inherit (self'.packages) chronocat;
         };
       };
     };
