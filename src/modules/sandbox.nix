@@ -37,8 +37,8 @@ in {
     #!${pkgs.runtimeShell}
     mkdir -p data
     ${pkgs.bubblewrap}/bin/bwrap \
-      --unshare-user \
-      --unshare-pid \
+      --unshare-all \
+      --share-net \
       --as-pid-1 \
       --uid 0 --gid 0 \
       --clearenv \
