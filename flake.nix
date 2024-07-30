@@ -4,10 +4,10 @@
   }: flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs { inherit system; };
   in rec {
-    packages = {
-      chronocat = pkgs.callPackage ./chronocat.nix packages;
-      default = pkgs.callPackage ./sandbox.nix packages;
-    };
     devShells.default = pkgs.mkShell {};
+    lib.buildChronocat = module: pkgs.callPackage ./src {
+      extraModules = [ module ];
+    };
+    packages.default = lib.buildChronocat {};
   });
 }
