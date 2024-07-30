@@ -1,17 +1,13 @@
 {
-  description = "Description for the project";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
-  };
-
-  outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [];
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        packages.chronocat = pkgs.callPackage ./chronocat.nix self'.packages;
-        packages.default = pkgs.callPackage ./sandbox.nix self'.packages;
-      };
+  outputs = {
+    self, nixpkgs, flake-utils,
+  }: flake-utils.lib.eachDefaultSystem (system: let
+    pkgs = import nixpkgs { inherit system; };
+  in rec {
+    packages = {
+      chronocat = pkgs.callPackage ./chronocat.nix packages;
+      default = pkgs.callPackage ./sandbox.nix packages;
     };
+    devShells.default = pkgs.mkShell {};
+  });
 }
