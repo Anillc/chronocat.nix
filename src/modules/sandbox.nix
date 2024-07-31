@@ -43,7 +43,6 @@ in {
       --uid 0 --gid 0 \
       --clearenv \
       --ro-bind /nix/store /nix/store \
-      --ro-bind /run /run \
       --bind ./data /root \
       --proc /proc \
       --dev /dev \
