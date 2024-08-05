@@ -1,11 +1,5 @@
 # chronocat.nix
 
-使用前需要将 bstar.js 0.5.8 加入到 nix store 中，请自行下载后添加
-
-```bash
-nix-store --add-fixed sha256 bstar.js
-```
-
 如果你不想用默认参数：
 
 ```nix
