@@ -18,12 +18,7 @@ in {
   config = {
     sandbox = {
       name = "chronocat";
-      program = pkgs.writeScript "chronocat" ''
-        #!${pkgs.runtimeShell}
-        mkdir -p ~/BetterUniverse/QQNT/Externals
-        cp ${js-ti-bin} ~/BetterUniverse/QQNT/Externals/chronocat.js.ti.bin
-        exec ${patched}/bin/qq --no-sandbox --disable-gpu
-      '';
+      program = "${patched}/bin/qq --no-sandbox --disable-gpu";
     };
     chronocat = config.sandbox.sandbox;
   };
