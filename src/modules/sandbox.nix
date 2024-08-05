@@ -57,13 +57,13 @@ in {
         }
 
         export PATH=${lib.makeBinPath (with pkgs; [
-          busybox xorg.xorgserver x11vnc
+          busybox xorg.xorgserver x11vnc dbus dunst
         ])}
         export HOME=/root
         export XDG_DATA_HOME=/root/.local/share
         export XDG_CONFIG_HOME=/root/.config
         export TERM=xterm
-        mkdir -p /root/{.local/share,.config} /etc/{ssl/certs,fonts}
+        mkdir -p /root/{.local/share,.config} /etc/{ssl/certs,fonts,dbus} /run/dbus
         mkdir -p /usr/bin /bin
         echo "root:x:0:0::/root:${pkgs.runtimeShell}" > /etc/passwd
         echo "root:x:0:" > /etc/group
@@ -73,9 +73,15 @@ in {
         ln -s ${fonts} /etc/fonts/fonts.conf
         ln -s $(which env) /usr/bin/env
         ln -s $(which sh) /bin/sh
+        cp ${pkgs.dbus}/share/dbus-1/system.conf /etc/dbus/system.conf
+        sed -i 's/<user>messagebus<\/user>/<user>root<\/user>/' /etc/dbus/system.conf
+        sed -i 's/<deny/<allow/' /etc/dbus/system.conf
+        export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/dbus/system_bus_socket'
         export DISPLAY=':${toString cfg.display}'
         createService xvfb 'Xvfb :${toString cfg.display}'
         createService x11vnc 'x11vnc -forever -display :${toString cfg.display} -rfbport ${toString cfg.port}'
+        createService dbus 'dbus-daemon --nofork --config-file=/etc/dbus/system.conf'
+        createService dunst 'dunst'
         createService program "${cfg.program} $@"
         runsvdir /services
       ''} "$@"
