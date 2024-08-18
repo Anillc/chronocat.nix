@@ -37,16 +37,9 @@ in {
       description = "password of x11vnc";
       default = null;
     };
-    passwordFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      description = "password file of x11vnc";
-      default = null;
-    };
   };
   config.sandbox.sandbox = let
-    passwdArg = if cfg.passwordFile != null
-      then "-rfbauth ${cfg.passwordFile}"
-      else lib.optionalString (cfg.password != null) "-passwd \"${cfg.password}\"";
+    passwdArg = lib.optionalString (cfg.password != null) "-passwd \"${cfg.password}\"";
   in pkgs.writeScriptBin cfg.name ''
     #!${pkgs.runtimeShell}
     mkdir -p data
