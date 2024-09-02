@@ -37,6 +37,11 @@ in {
       description = "password of x11vnc";
       default = null;
     };
+    novnc = lib.mkOption {
+      type = lib.types.nullOr lib.types.int;
+      description = "listen port of noVNC";
+      default = null;
+    };
   };
   config.sandbox.sandbox = let
     passwdArg = lib.optionalString (cfg.password != null) "-passwd \"${cfg.password}\"";
@@ -63,9 +68,10 @@ in {
           chmod +x /services/$1/run
         }
 
-        export PATH=${lib.makeBinPath (with pkgs; [
-          busybox xorg.xorgserver x11vnc dbus dunst
-        ])}
+        export PATH=${lib.makeBinPath (with pkgs; 
+          [ busybox xorg.xorgserver x11vnc dbus dunst ]
+          ++ lib.optional (cfg.novnc != null) novnc
+        )}
         export HOME=/root
         export XDG_DATA_HOME=/root/.local/share
         export XDG_CONFIG_HOME=/root/.config
@@ -87,6 +93,9 @@ in {
         export DISPLAY=':${toString cfg.display}'
         createService xvfb 'Xvfb :${toString cfg.display}'
         createService x11vnc 'x11vnc -forever -display :${toString cfg.display} -rfbport ${toString cfg.port} ${passwdArg}'
+        ${lib.optionalString (cfg.novnc != null) ''
+          createService novnc "novnc --vnc localhost:${toString cfg.port} --listen ${toString cfg.novnc} --file-only"
+        '' }
         createService dbus 'dbus-daemon --nofork --config-file=/etc/dbus/system.conf'
         createService dunst 'dunst'
         createService program "${cfg.program} $@"
