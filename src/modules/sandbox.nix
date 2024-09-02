@@ -38,9 +38,7 @@ in {
       default = null;
     };
   };
-  config.sandbox.sandbox = let
-    passwdArg = lib.optionalString (cfg.password != null) "-passwd \"${cfg.password}\"";
-  in pkgs.writeScriptBin cfg.name ''
+  config.sandbox.sandbox = pkgs.writeScriptBin cfg.name ''
     #!${pkgs.runtimeShell}
     mkdir -p data
     ${pkgs.bubblewrap}/bin/bwrap \
@@ -86,7 +84,11 @@ in {
         export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/dbus/system_bus_socket'
         export DISPLAY=':${toString cfg.display}'
         createService xvfb 'Xvfb :${toString cfg.display}'
-        createService x11vnc 'x11vnc -forever -display :${toString cfg.display} -rfbport ${toString cfg.port} ${passwdArg}'
+        createService x11vnc 'x11vnc ${lib.concatStringsSep " " [
+          "-forever" "-display :${toString cfg.display}"
+          "-rfbport ${toString cfg.port}"
+          (lib.optionalString (cfg.password != null) "-passwd ${cfg.password}")
+        ]}'
         createService dbus 'dbus-daemon --nofork --config-file=/etc/dbus/system.conf'
         createService dunst 'dunst'
         createService program "${cfg.program} $@"
