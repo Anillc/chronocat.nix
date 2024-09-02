@@ -9,5 +9,8 @@
       extraModules = [ module ];
     };
     packages.default = lib.buildChronocat {};
+    packages.novnc = lib.buildChronocat {
+      sandbox.novnc = 8080;
+    };
   });
 }
