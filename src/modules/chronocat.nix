@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }: let
   js-ti-bin = pkgs.fetchurl {
-    url = "https://github.com/chrononeko/chronocat/releases/download/v0.2.15/chronocat.js.ti-v0.2.15.bin";
-    hash = "sha256-uX+gKXdo2qb9LuJTFO5LXrBeqYM8TK0JODX/5K3j51U=";
+    url = "https://github.com/chrononeko/chronocat/releases/download/v0.2.16/chronocat.js.ti-v0.2.16.bin";
+    hash = "sha256-ErOwtKXoL2aglDjbPL7gmaGHTAeYG2Pf36GoLcY6EPs=";
   };
   patched = pkgs.qq.overrideAttrs (old : {
     postFixup = ''
