@@ -43,9 +43,9 @@ in {
       default = null;
     };
   };
-  config.sandbox.sandbox = pkgs.writeScriptBin cfg.name ''
+  config.sandbox.sandbox = (pkgs.writeScriptBin cfg.name ''
     #!${pkgs.runtimeShell}
-    mkdir -p data
+    ${pkgs.busybox}/bin/mkdir -p data
     ${pkgs.bubblewrap}/bin/bwrap \
       --unshare-all \
       --share-net \
@@ -103,5 +103,7 @@ in {
         createService program "${cfg.program} $@"
         runsvdir /services
       ''} "$@"
-  '';
+  '').overrideAttrs (old: {
+    passthru.docker = config.docker;
+  });
 }

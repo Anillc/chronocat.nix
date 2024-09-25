@@ -12,5 +12,6 @@
     packages.novnc = lib.buildChronocat {
       sandbox.novnc = 8080;
     };
+    packages.docker = (lib.buildChronocat {}).docker;
   });
 }
