@@ -11,15 +11,9 @@
     meta = {};
   });
 in {
-  options.chronocat = lib.mkOption {
+  options.chronocat.qq = lib.mkOption {
     type = lib.types.path;
-    description = "chronocat";
+    description = "qq";
   };
-  config = {
-    sandbox = {
-      name = "chronocat";
-      program = "${patched}/bin/qq --no-sandbox --disable-gpu";
-    };
-    chronocat = config.sandbox.sandbox;
-  };
+  config.chronocat.qq = patched;
 }

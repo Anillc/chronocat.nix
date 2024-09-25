@@ -1,17 +1,13 @@
 { config, pkgs, lib, ... }: let
-  cfg = config.sandbox;
+  cfg = config.chronocat;
   fonts = pkgs.makeFontsConf {
     fontDirectories = with pkgs; [ source-han-sans ];
   };
 in {
-  options.sandbox = {
-    name = lib.mkOption {
-      type = lib.types.str;
-      description = "name of output executable";
-    };
-    program = lib.mkOption {
-      type = lib.types.pathInStore;
-      description = "program runs in sandbox";
+  options.chronocat = {
+    chronocat = lib.mkOption {
+      type = lib.types.path;
+      description = "chronocat";
     };
     dns = lib.mkOption {
       type = lib.types.str;
@@ -28,10 +24,6 @@ in {
       description = "listen port of x11vnc";
       default = 5900;
     };
-    sandbox = lib.mkOption {
-      type = lib.types.path;
-      description = "sandbox";
-    };
     password = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       description = "password of x11vnc";
@@ -43,7 +35,7 @@ in {
       default = null;
     };
   };
-  config.sandbox.sandbox = (pkgs.writeScriptBin cfg.name ''
+  config.chronocat.chronocat = pkgs.writeScriptBin "chronocat" ''
     #!${pkgs.runtimeShell}
     ${pkgs.busybox}/bin/mkdir -p data
     ${pkgs.bubblewrap}/bin/bwrap \
@@ -100,10 +92,8 @@ in {
         '' }
         createService dbus 'dbus-daemon --nofork --config-file=/etc/dbus/system.conf'
         createService dunst 'dunst'
-        createService program "${cfg.program} $@"
+        createService program "${cfg.qq}/bin/qq --no-sandbox --disable-gpu $@"
         runsvdir /services
       ''} "$@"
-  '').overrideAttrs (old: {
-    passthru.docker = config.docker;
-  });
+  '';
 }

@@ -1,13 +1,13 @@
 { config, pkgs, lib, ... }: {
-  options.docker = lib.mkOption {
+  options.chronocat.docker = lib.mkOption {
     type = lib.types.path;
     description = "docker image";
   };
-  config.docker = pkgs.dockerTools.buildLayeredImage {
+  config.chronocat.docker = pkgs.dockerTools.buildLayeredImage {
     name = "chronocat";
     tag = "latest";
     contents = [
-      config.chronocat
+      config.chronocat.chronocat
       (pkgs.writeScriptBin "entrypoint.sh" ''
         #!${pkgs.runtimeShell}
         ${pkgs.busybox}/bin/mkdir -p /tmp

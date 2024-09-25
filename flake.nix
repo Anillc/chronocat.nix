@@ -1,17 +1,20 @@
 {
-  outputs = {
-    self, nixpkgs, flake-utils,
-  }: flake-utils.lib.eachDefaultSystem (system: let
-    pkgs = import nixpkgs { inherit system; };
-  in rec {
-    devShells.default = pkgs.mkShell {};
-    lib.buildChronocat = module: pkgs.callPackage ./src {
-      extraModules = [ module ];
+  outputs = inputs@{
+    self, nixpkgs, flake-parts,
+  }: let
+    modules = map (x: ./modules/${x}) (nixpkgs.lib.attrNames (builtins.readDir ./modules));
+  in flake-parts.lib.mkFlake { inherit inputs; } {
+    systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    perSystem = { config, pkgs, lib, ... }: {
+      imports = modules;
+      packages.default = config.chronocat.chronocat;
+      packages.docker = config.chronocat.docker;
+      devShells.default = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [];
+      };
     };
-    packages.default = lib.buildChronocat {};
-    packages.novnc = lib.buildChronocat {
-      sandbox.novnc = 8080;
+    flake.flakeModules.default = {
+      imports = modules;
     };
-    packages.docker = (lib.buildChronocat {}).docker;
-  });
+  };
 }
