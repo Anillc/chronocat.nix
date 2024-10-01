@@ -6,14 +6,7 @@
   config.chronocat.docker = pkgs.dockerTools.buildLayeredImage {
     name = "chronocat";
     tag = "latest";
-    contents = [
-      config.chronocat.chronocat
-      (pkgs.writeScriptBin "entrypoint.sh" ''
-        #!${pkgs.runtimeShell}
-        ${pkgs.busybox}/bin/mkdir -p /tmp
-        exec /bin/chronocat
-      '')
-    ];
-    config.Entrypoint = [ "/bin/entrypoint.sh" ];
+    contents = [ config.chronocat.script ];
+    config.ENTRYPOINT = [ "/bin/script" ];
   };
 }
