@@ -84,7 +84,7 @@ in {
       '' }
       createService dbus 'dbus-daemon --nofork --config-file=/etc/dbus/system.conf'
       createService dunst 'dunst'
-      createService program "${cfg.qq}/bin/qq --no-sandbox --disable-gpu $@"
+      createService program "${cfg.bstar}/bin/bstar --no-sandbox --disable-gpu $@"
       runsvdir /services
     '';
     chronocat = pkgs.writeScriptBin "chronocat" ''
